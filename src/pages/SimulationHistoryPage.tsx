@@ -27,10 +27,11 @@ export function SimulationHistoryPage() {
   };
 
   const handleDelete = (id: string) => {
-    // Implementation for deleting simulation data
-    const result = deleteFormData(id);
-    // Update the data state to reflect the deletion
-    setData(result);
+    const userChoice = confirm('Deseja realmente excluir esta simulação?');
+    if (userChoice === true) {
+      const result = deleteFormData(id);
+      setData(result);
+    }
   };
 
   return (
@@ -46,7 +47,11 @@ export function SimulationHistoryPage() {
         <div key={record.id} className="m-4">
           <Card
             goalName={record.goalName}
-            goalDate={record.goalDate}
+            goalDate={
+              record.createdAt
+                ? new Date(record.createdAt).toLocaleDateString()
+                : 'Data desconhecida'
+            }
             goalAmount={record.goalAmount}
             goalDeadline={record.goalDeadline}
             goalAmountMonthly={record.goalAmountMonthly}

@@ -62,3 +62,77 @@ export function buildAIPrompt(simulation: SimulationRecord) {
       - "needs_adjustment": saldo negativo de até 20% do valor da economia mensal necessária
       - "unfeasible": saldo negativo superior a 20% do valor da economia mensal necessária`;
 }
+
+export function chatAIPrompt(simulation: SimulationRecord) {
+  const { income, expenses, debts, goalName, goalAmount, goalDeadline } = simulation;
+
+  const monthlySavings = calcMonthlySavings(simulation);
+  const monthlySavingsNeeded = parseCurrency(goalAmount) / parseInt(goalDeadline);
+
+  const basePrompt = `Base da Simulação:'
+    Você é um educador financeiro especializado em finanças pessoais. 
+    Analise os dados abaixo e gere um diagnóstico financeiro personalizado com linguagem clara, didática e encorajadora, 
+    voltado para pessoas sem conhecimento financeiro. O diagnóstico será exibido diretamente ao usuário no app, 
+    fale sempre em segunda pessoa ("você tem...", "sua meta...").
+
+    Dados da simulação:
+    - Renda mensal bruta: ${income}
+    - Custos fixos essenciais: ${expenses}
+    - Dívidas e parcelas mensais: ${debts}
+    - Valor disponível por mês: ${monthlySavings} reais
+    - Meta: ${goalName}
+    - Custo da meta: ${goalAmount}
+    - Prazo desejado: ${goalDeadline} meses
+    - Economia mensal necessária para atingir a meta no prazo: ${monthlySavingsNeeded} reais
+    - Saldo após reserva para a meta: ${monthlySavings - monthlySavingsNeeded} reais
+  `
+
+  let insightPart;
+  if (simulation.insight) {
+    insightPart = `O diagnóstico financeiro inicial foi:
+    
+    Viabilidade da Meta:${simulation.insight.feasibility.status}
+    ${simulation.insight.feasibility.content}
+
+    Diagnóstico Financeiro:
+    ${simulation.insight.diagnosis.content}
+
+    Sugestões Práticas:
+    ${simulation.insight.suggestions.items.join('\n')}
+
+    Como Aumentar sua Renda:
+    ${simulation.insight.extraIncome.items.join('\n')}
+
+    Sugestões de Investimento:
+    ${simulation.insight.investment.items.join('\n')}
+
+    Mensagem Motivacional:
+    ${simulation.insight.motivation.content}`
+  }
+
+  let chatPart;
+  if (simulation.chat && simulation.chat.length > 0) {
+    const formattedChat = simulation.chat.map(msg => `${msg.sender === 'user' ? 'Usuário' : 'IA'}: ${msg.content}`)
+      .join('\n');
+    chatPart = `O histórico do chat até agora é:\n${formattedChat}`;
+  } else {
+    chatPart = '';
+  }
+
+  return `${basePrompt}
+
+    ${insightPart}
+
+    ${chatPart}    
+
+    Com base na simulação enviada, no diagnóstico financeiro e no histórico do chat, 
+    responda à última pergunta do usuário de forma clara e didática.
+    
+    Regras:
+    - resposta simples, resumida e direta, sem rodeios
+    - Todos os textos em português do Brasil    
+    - Seja específico ao citar valores calculados
+    - Não repita informações entre seções
+    - Nunca use markdown
+    - Responda apenas à última pergunta do usuário, sem repetir a pergunta ou incluir o histórico do chat na resposta`;
+}
