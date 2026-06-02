@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+public
+*.config.js
+*.lock
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+.git
+*.log
+**/generated/**

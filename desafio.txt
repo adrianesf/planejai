@@ -1,0 +1,16 @@
+Desafios
+Desafio 1 — Página de Histórico de Simulações
+Exiba um resumo de cada simulação salva
+Crie um layout responsivo seguindo o protótipo
+Permita excluir uma simulação do histórico
+Ao clicar em "Ver detalhes", navegue para a página de resultados com os insights já gerados
+
+Desafio 2 — Conversando com o Educador Financeiro
+Adicione um campo de texto dentro do componente AIInsightCard
+Permita que o usuário faça perguntas sobre a simulação realizada
+A IA deve retornar respostas claras e exibi-las seguindo o protótipo
+O scroll deve rolar automaticamente quando a IA retornar uma resposta
+Mostre feedback de carregamento e erro para o usuário
+O usuário pode fazer quantas perguntas quiser por simulação
+Todo o histórico de perguntas e respostas deve ser exibido na tela
+As conversas devem ser salvas no localStorage para consulta posterior
